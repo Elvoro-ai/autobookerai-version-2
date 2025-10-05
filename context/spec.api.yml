@@ -1,0 +1,12 @@
+openapi: 3.0.0
+info: {title: AutoBooker API, version: 0.1.0}
+paths:
+  /api/availability:
+    get: {summary: Lire disponibilités}
+    post: {summary: Mettre à jour disponibilités}
+  /api/appointments:
+    get: {summary: Lister RDV}
+    post: {summary: Créer RDV}
+    patch: {summary: Reprogrammer/Annuler}
+  /api/notify/send:
+    post: {summary: Envoyer notification email/SMS}
