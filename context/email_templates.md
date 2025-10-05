@@ -1,0 +1,3 @@
+- Confirmation: sujet, variables {coach, date, heure, lien reprogrammer/annuler}
+- Rappel J-1: tonalité courte, mobile-friendly
+- Rebook no-show: empathique, proposition 3 créneaux (IA)
