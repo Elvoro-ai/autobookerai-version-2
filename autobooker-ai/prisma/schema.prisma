@@ -1,0 +1,27 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Coach {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  createdAt DateTime   @default(now())
+  appointments Appointment[]
+}
+
+model Appointment {
+  id         String     @id @default(uuid())
+  coachId    String
+  clientName String
+  clientEmail String
+  dateTime   DateTime
+  cancelled  Boolean    @default(false)
+  createdAt  DateTime   @default(now())
+  Coach      Coach      @relation(fields: [coachId], references: [id])
+}
