@@ -1,0 +1,51 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { db } from "@/prisma/client";
+
+const AppointmentSchema = z.object({
+  coachId: z.string().uuid(),
+  clientId: z.string().uuid(),
+  dateTime: z.string().or(z.date()).transform((val) => new Date(val)),
+});
+
+export async function GET() {
+  const appointments = await db.appointment.findMany();
+  return NextResponse.json(appointments);
+}
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const { coachId, clientId, dateTime } = AppointmentSchema.parse(body);
+    // vérifier qu'aucun rendez-vous n'existe déjà pour ce coach à la même date/heure (et non annulé)
+    const conflict = await db.appointment.findFirst({
+      where: {
+        coachId,
+        dateTime,
+        cancelled: false,
+      },
+    });
+    if (conflict) {
+      return NextResponse.json({ error: "Slot already booked" }, { status: 400 });
+    }
+    const appointment = await db.appointment.create({
+      data: {
+        coachId,
+        clientId,
+        dateTime,
+      },
+    });
+    return NextResponse.json(appointment, { status: 201 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+  }
+}
+
+// Unsupported methods
+export function PUT() {
+  return new NextResponse(null, { status: 405 });
+}
+export const PATCH = PUT;
+export const DELETE = PUT;
+https://github.com/Elvoro-ai/autobookerai-version-2
