@@ -7,21 +7,90 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Coach {
-  id        String     @id @default(uuid())
-  name      String
-  email     String     @unique
-  createdAt DateTime   @default(now())
+enum Role {
+  COACH
+  ADMIN
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String    @unique
+  role          Role      @default(COACH)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  appointments  Appointment[]
+  availabilities Availability[]
+  clients        Client[] @relation("CoachClients")
+  notifications Notification[]
+  audits        Audit[]
+  plans         Plan[]
+}
+
+model Client {
+  id         String    @id @default(uuid())
+  name       String
+  email      String
+  phone      String?
+  createdAt  DateTime  @default(now())
+  coach      User      @relation("CoachClients", fields: [coachId], references: [id])
+  coachId    String
   appointments Appointment[]
 }
 
 model Appointment {
-  id         String     @id @default(uuid())
+  id         String    @id @default(uuid())
+  coach      User      @relation(fields: [coachId], references: [id])
   coachId    String
-  clientName String
-  clientEmail String
-  dateTime   DateTime
-  cancelled  Boolean    @default(false)
-  createdAt  DateTime   @default(now())
-  Coach      Coach      @relation(fields: [coachId], references: [id])
+  client     Client?   @relation(fields: [clientId], references: [id])
+  clientId   String?
+  startTime  DateTime
+  endTime    DateTime
+  status     AppointmentStatus @default(SCHEDULED)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Availability {
+  id         String   @id @default(uuid())
+  coach      User     @relation(fields: [coachId], references: [id])
+  coachId    String
+  startTime  DateTime
+  endTime    DateTime
+  createdAt  DateTime @default(now())
+}
+
+model Notification {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  type       String
+  message    String
+  createdAt  DateTime @default(now())
+  read       Boolean  @default(false)
+}
+
+model Audit {
+  id         String   @id @default(uuid())
+  user       User?    @relation(fields: [userId], references: [id])
+  userId     String?
+  action     String
+  context    String?
+  createdAt  DateTime @default(now())
+}
+
+model Plan {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  type       String
+  quota      Int
+  createdAt  DateTime @default(now())
 }
