@@ -1,1 +1,6 @@
-{"crons": [{"path": "/api/cron/reindex", "schedule": "0 3 * * *"}, {"path": "/api/cron/health", "schedule": "0 0 * * *"}]}
+{
+  "crons": [
+    { "path": "/api/cron/reindex", "schedule": "0 3 * * *" },
+    { "path": "/api/cron/health",  "schedule": "0 0 * * *" }
+  ]
+}
