@@ -1,9 +1,5 @@
 {
   "name": "repo-root",
-  "private": true,
-  "version": "0.0.1",
-  "scripts": {
-    "build": "echo \"root placeholder\"",
-    "start": "echo \"root placeholder\""
-  }
+  "version": "1.0.0",
+  "private": true
 }
