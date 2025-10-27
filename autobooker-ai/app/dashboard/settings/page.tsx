@@ -1,7 +1,6 @@
 // path: autobooker-ai/app/dashboard/settings/page.tsx
 'use client';
-
-import { useSession } from '@auth/nextjs';
+import { useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -32,94 +31,107 @@ export default function SettingsPage() {
     if (!session) {
       router.push('/login');
     } else {
-      // Récupère les préférences existantes depuis l’API (facultatif)
+      // Récupère les préférences existantes depuis l'API (facultatif)
       fetch('/api/settings/notifications')
         .then((res) => res.json())
         .then((data) => {
-          if (data.settings) setSettings(data.settings);
+          if (data) setSettings(data);
           setLoading(false);
         })
-        .catch(() => setLoading(false));
+        .catch((err) => {
+          console.error('Erreur récupération settings:', err);
+          setLoading(false);
+        });
     }
   }, [session, status, router]);
 
-  const handleChange = (
-    key: keyof NotificationSettings,
-    value: string | number | boolean
-  ) => {
-    setSettings((prev) => ({ ...prev, [key]: value }));
-  };
-
   const handleSave = async () => {
-    await fetch('/api/settings/notifications', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(settings),
-    });
-    alert('Préférences sauvegardées');
+    setLoading(true);
+    try {
+      const res = await fetch('/api/settings/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings),
+      });
+      if (!res.ok) throw new Error('Échec de mise à jour');
+      alert('Paramètres sauvegardés avec succès !');
+    } catch (err) {
+      console.error(err);
+      alert('Erreur lors de la sauvegarde');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (loading) return <p className="p-4">Chargement…</p>;
+  if (status === 'loading' || loading) {
+    return <div>Chargement...</div>;
+  }
 
   return (
-    <div className="p-4 max-w-xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold mb-4">Paramètres des relances</h1>
-      <label className="flex items-center space-x-2">
-        <input
-          type="checkbox"
-          checked={settings.reminder}
-          onChange={(e) => handleChange('reminder', e.target.checked)}
-        />
-        <span>Activer rappel J‑1</span>
-      </label>
-      <label className="flex items-center space-x-2">
-        <input
-          type="checkbox"
-          checked={settings.noShow}
-          onChange={(e) => handleChange('noShow', e.target.checked)}
-        />
-        <span>Activer détection no‑show</span>
-      </label>
-      <label className="flex items-center space-x-2">
-        <input
-          type="checkbox"
-          checked={settings.rebook}
-          onChange={(e) => handleChange('rebook', e.target.checked)}
-        />
-        <span>Activer rebooking J+1</span>
-      </label>
-      <label className="flex items-center space-x-2">
-        <input
-          type="checkbox"
-          checked={settings.nps}
-          onChange={(e) => handleChange('nps', e.target.checked)}
-        />
-        <span>Activer enquête NPS J+7</span>
-      </label>
-      <div className="flex flex-col">
-        <label>Fuseau horaire</label>
-        <input
-          type="text"
-          value={settings.timezone}
-          onChange={(e) => handleChange('timezone', e.target.value)}
-          className="border rounded p-2 mt-1 dark:bg-gray-800"
-        />
-      </div>
-      <div className="flex flex-col">
-        <label>Fenêtre de réservation (jours)</label>
-        <input
-          type="number"
-          value={settings.bookingWindow}
-          onChange={(e) => handleChange('bookingWindow', Number(e.target.value))}
-          className="border rounded p-2 mt-1 dark:bg-gray-800"
-        />
-      </div>
-      <button
-        onClick={handleSave}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        Sauvegarder
-      </button>
+    <div style={{ padding: '2rem' }}>
+      <h1>Paramètres de Notification</h1>
+      <form>
+        <label>
+          <input
+            type="checkbox"
+            checked={settings.reminder}
+            onChange={(e) => setSettings({ ...settings, reminder: e.target.checked })}
+          />
+          Rappel de rendez-vous
+        </label>
+        <br />
+        <label>
+          <input
+            type="checkbox"
+            checked={settings.noShow}
+            onChange={(e) => setSettings({ ...settings, noShow: e.target.checked })}
+          />
+          Notification en cas de no-show
+        </label>
+        <br />
+        <label>
+          <input
+            type="checkbox"
+            checked={settings.rebook}
+            onChange={(e) => setSettings({ ...settings, rebook: e.target.checked })}
+          />
+          Relance pour reprendre RDV
+        </label>
+        <br />
+        <label>
+          <input
+            type="checkbox"
+            checked={settings.nps}
+            onChange={(e) => setSettings({ ...settings, nps: e.target.checked })}
+          />
+          Sondage NPS
+        </label>
+        <br />
+        <label>
+          Fuseau horaire:
+          <select
+            value={settings.timezone}
+            onChange={(e) => setSettings({ ...settings, timezone: e.target.value })}
+          >
+            <option value="Europe/Paris">Europe/Paris</option>
+            <option value="America/New_York">America/New_York</option>
+            <option value="Asia/Tokyo">Asia/Tokyo</option>
+          </select>
+        </label>
+        <br />
+        <label>
+          Fenêtre de réservation (jours):
+          <input
+            type="number"
+            value={settings.bookingWindow}
+            onChange={(e) => setSettings({ ...settings, bookingWindow: parseInt(e.target.value, 10) })}
+          />
+        </label>
+        <br />
+        <button type="button" onClick={handleSave} disabled={loading}>
+          Sauvegarder
+        </button>
+      </form>
     </div>
   );
 }
