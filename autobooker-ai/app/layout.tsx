@@ -7,7 +7,7 @@ import { Box, Flex } from '@chakra-ui/react';
 
 export const metadata = {
   title: 'AutoBooker AI',
-  description: 'Gagnez 10 heures/semaine grâce à l'IA',
+  description: 'Gagnez 10 heures/semaine grâce à l\'IA',
 };
 
 export default function RootLayout({
@@ -16,8 +16,8 @@ export default function RootLayout({
   children: ReactNode;
 }) {
   return (
-    <html lang="fr" className="h-full">
-      <body className="h-full">
+    <html lang="en">
+      <body>
         <ChakraProvider>
           <Flex h="100vh" overflow="hidden">
             <Sidebar />
