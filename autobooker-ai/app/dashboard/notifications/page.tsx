@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 import { redirect } from "next/navigation";
 import { db } from "@/prisma/client";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "../../api/auth/[...nextauth]/route";
 
 export default async function NotificationsPage() {
   const session = await getServerSession(authOptions);
