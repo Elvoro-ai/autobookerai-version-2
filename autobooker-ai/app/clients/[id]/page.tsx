@@ -1,6 +1,5 @@
 'use client';
-
-import { useSession } from '@auth/nextjs';
+import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
@@ -26,6 +25,7 @@ export default function ClientPage() {
       router.push('/login');
       return;
     }
+
     const fetchData = async () => {
       const res = await fetch('/api/appointments');
       const data = await res.json();
@@ -33,6 +33,7 @@ export default function ClientPage() {
         data.filter((a: Appointment) => a.clientId === clientId)
       );
     };
+
     fetchData();
   }, [status, session, clientId, router]);
 
@@ -43,13 +44,13 @@ export default function ClientPage() {
         {appointments.map((a) => (
           <li key={a.id} className="border p-2 rounded-md">
             <div>
-              <strong>Date :</strong>{' '}
+              Date :{' '}
               {new Date(a.dateTime).toLocaleString('fr-FR')}
             </div>
             <div>
-              <strong>Statut :</strong> {a.status}
+              Statut : {a.status}
             </div>
-            {/* Note : implémentez l’édition des notes ici */}
+            {/* Note : implémentez l'édition des notes ici */}
           </li>
         ))}
       </ul>
