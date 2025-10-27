@@ -1,7 +1,6 @@
 "use client";
-
 import { useState, FormEvent } from "react";
-import { signIn } from "@auth/nextjs";
+import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
