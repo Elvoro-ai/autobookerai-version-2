@@ -11,7 +11,9 @@ interface Appointment {
 }
 
 export default function DashboardPage() {
-  const { data: session, status } = useSession();
+  const sessionData = useSession();
+  const session = sessionData?.data ?? null;
+  const status = sessionData?.status;
   const router = useRouter();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -81,7 +83,7 @@ export default function DashboardPage() {
   };
 
   if (status === 'loading' || !session) {
-    return <div className="p-4">Chargement...</div>;
+    return <div className="p-4">{!session && status !== 'loading' ? 'Non authentifié' : 'Chargement...'}</div>;
   }
 
   return (
@@ -117,7 +119,7 @@ export default function DashboardPage() {
           <thead>
             <tr>
               {['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'].map(day => (
-                <th key={day} className="border p-2 text-center text-xs sm:text-sm">{day}</th>
+                <th className="border p-2 text-center text-xs sm:text-sm" key={day}>{day}</th>
               ))}
             </tr>
           </thead>
@@ -131,8 +133,8 @@ export default function DashboardPage() {
                     return d.toDateString() === day.toDateString();
                   });
                   return (
-                    <td key={di} className={`border h-16 p-1 align-top text-xs sm:text-sm ${isCurrent ? '' : 'bg-gray-100 dark:bg-gray-800'}`}>
-                      <div>{day.getDate()}</div>
+                    <td className={`border p-1 text-xs sm:text-sm align-top h-16 ${isCurrent ? '' : 'dark:bg-gray-800'}`} key={di}>
+                      {day.getDate()}
                       {has && <div className="w-2 h-2 bg-blue-500 rounded-full mt-1"></div>}
                     </td>
                   );
