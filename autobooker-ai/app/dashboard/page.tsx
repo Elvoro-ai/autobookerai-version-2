@@ -1,6 +1,5 @@
 'use client';
-
-import { useSession } from '@auth/nextjs';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
@@ -33,7 +32,6 @@ export default function DashboardPage() {
   }, [session, status, router]);
 
   const filtered = selectedClient === 'all' ? appointments : appointments.filter(a => a.clientId === selectedClient);
-
   const now = new Date();
   const weekStart = new Date(now);
   weekStart.setDate(now.getDate() - now.getDay());
@@ -66,7 +64,6 @@ export default function DashboardPage() {
   }
 
   const weeks = generateCalendar(currentMonth);
-
   const uniqueClientIds = Array.from(new Set(appointments.map(a => a.clientId)));
 
   const exportCSV = () => {
@@ -91,7 +88,7 @@ export default function DashboardPage() {
     <div className="p-4 space-y-6">
       <h1 className="text-2xl font-bold mb-4">Tableau de bord</h1>
       <div>
-        <label htmlFor="client-select" className="mr-2">Filtrer par client:</label>
+        <label className="mr-2" htmlFor="client-select">Filtrer par client:</label>
         <select id="client-select" value={selectedClient} onChange={(e) => setSelectedClient(e.target.value)} className="border px-2 py-1 rounded">
           <option value="all">Tous</option>
           {uniqueClientIds.map(id => (
@@ -109,7 +106,7 @@ export default function DashboardPage() {
           <p className="text-3xl">{monthCount}</p>
         </div>
       </div>
-      <button onClick={exportCSV} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Exporter CSV</button>
+      <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors" onClick={exportCSV}>Exporter CSV</button>
       <div className="overflow-x-auto">
         <div className="flex items-center justify-between my-2">
           <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))} className="px-2 py-1">«</button>
