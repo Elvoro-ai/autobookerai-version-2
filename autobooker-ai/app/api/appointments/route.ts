@@ -48,4 +48,3 @@ export function PUT() {
 }
 export const PATCH = PUT;
 export const DELETE = PUT;
-https://github.com/Elvoro-ai/autobookerai-version-2
