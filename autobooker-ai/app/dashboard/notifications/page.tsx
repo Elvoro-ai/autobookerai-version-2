@@ -1,4 +1,4 @@
-import { getServerSession } from '@auth/nextjs';
+import { getServerSession } from 'next-auth/next';
 import { redirect } from "next/navigation";
 import { db } from "@/prisma/client";
 import { authOptions } from "../api/auth/[...nextauth]/route";
@@ -18,7 +18,7 @@ export default async function NotificationsPage() {
     <div className="p-4 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Notifications</h1>
       {notifications.length === 0 ? (
-        <p>Vous n’avez aucune notification pour le moment.</p>
+        <p>Vous n'avez aucune notification pour le moment.</p>
       ) : (
         <ul className="space-y-2">
           {notifications.map((n) => (
