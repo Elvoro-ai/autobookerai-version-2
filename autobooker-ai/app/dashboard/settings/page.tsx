@@ -1,5 +1,6 @@
 // path: autobooker-ai/app/dashboard/settings/page.tsx
 'use client';
+
 import { useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -14,7 +15,9 @@ interface NotificationSettings {
 }
 
 export default function SettingsPage() {
-  const { data: session, status } = useSession();
+  const sessionData = useSession();
+  const session = sessionData?.data ?? null;
+  const status = sessionData?.status;
   const router = useRouter();
   const [settings, setSettings] = useState<NotificationSettings>({
     reminder: true,
@@ -67,8 +70,12 @@ export default function SettingsPage() {
     return <div>Chargement...</div>;
   }
 
+  if (!session) {
+    return <div>Non authentifié</div>;
+  }
+
   return (
-    <div style={{ padding: '2rem' }}>
+    <div style={{ padding: '20px' }}>
       <h1>Paramètres de Notification</h1>
       <form>
         <label>
@@ -80,6 +87,7 @@ export default function SettingsPage() {
           Rappel de rendez-vous
         </label>
         <br />
+
         <label>
           <input
             type="checkbox"
@@ -89,6 +97,7 @@ export default function SettingsPage() {
           Notification en cas de no-show
         </label>
         <br />
+
         <label>
           <input
             type="checkbox"
@@ -98,6 +107,7 @@ export default function SettingsPage() {
           Relance pour reprendre RDV
         </label>
         <br />
+
         <label>
           <input
             type="checkbox"
@@ -107,6 +117,7 @@ export default function SettingsPage() {
           Sondage NPS
         </label>
         <br />
+
         <label>
           Fuseau horaire:
           <select
@@ -119,6 +130,7 @@ export default function SettingsPage() {
           </select>
         </label>
         <br />
+
         <label>
           Fenêtre de réservation (jours):
           <input
@@ -128,6 +140,7 @@ export default function SettingsPage() {
           />
         </label>
         <br />
+
         <button type="button" onClick={handleSave} disabled={loading}>
           Sauvegarder
         </button>
