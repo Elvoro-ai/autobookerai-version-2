@@ -1,0 +1,14 @@
+# Redirects for Next.js App Router on Netlify
+
+# API routes
+/api/* /api/:splat 200
+
+# Static assets
+/_next/static/* /_next/static/:splat 200
+
+# Images and media
+/images/* /images/:splat 200
+/favicon.ico /favicon.ico 200
+
+# Handle client-side routing - this should be last
+/* /index.html 200
