@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { db } from '@/prisma/client';
+import { db } from '../../../lib/db';
 
 // Renvoie les disponibilités des coachs (placeholder)
 export async function GET() {
