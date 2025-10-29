@@ -1,7 +1,6 @@
-import { db } from '@/prisma/client';
+import { db } from '@prisma/client';
 import { generateRebookEmail } from '@/emails/rebook';
 import { sendEmail } from '@/lib/email';
-
 /**
  * Job: Send rebook emails 1 day after a no-show.
  * Finds appointments marked as NO_SHOW the previous day and sends an email with suggested new slots.
@@ -9,7 +8,6 @@ import { sendEmail } from '@/lib/email';
 export async function sendRebookJob() {
   // Determine cutoff: appointments flagged as no-show up to yesterday
   const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
   const appointments = await db.appointment.findMany({
     where: {
       status: 'NO_SHOW',
@@ -20,7 +18,6 @@ export async function sendRebookJob() {
       client: true
     }
   });
-
   for (const appointment of appointments) {
     // Suggest three new slots: next three days at the same time
     const suggestions: { date: string; time: string }[] = [];
@@ -32,19 +29,16 @@ export async function sendRebookJob() {
         time: newDate.toLocaleTimeString()
       });
     }
-
     const email = generateRebookEmail({
       coachName: appointment.coach.name,
       clientName: appointment.client.name,
       suggestions,
       rebookLink: `${process.env.NEXT_PUBLIC_APP_URL}/book/${appointment.coachId}`
     });
-
     await sendEmail({
       to: [appointment.client.email],
       ...email
     });
-
     // Log notification for the coach
     await db.notification.create({
       data: {
