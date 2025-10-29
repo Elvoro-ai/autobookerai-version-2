@@ -1,7 +1,6 @@
-import { db } from '@/prisma/client';
+import { db } from '@prisma/client';
 import { sendEmail } from '@/lib/email';
 import { generateReminderEmail } from '@/emails/reminder';
-
 export async function sendReminderJob() {
   // Determine tomorrow's date range
   const now = new Date();
@@ -11,7 +10,6 @@ export async function sendReminderJob() {
   startOfDay.setHours(0, 0, 0, 0);
   const endOfDay = new Date(tomorrow);
   endOfDay.setHours(23, 59, 59, 999);
-
   const appointments = await db.appointment.findMany({
     where: {
       dateTime: {
@@ -25,12 +23,10 @@ export async function sendReminderJob() {
       Client: true,
     },
   });
-
   for (const appt of appointments) {
     const coach = appt.Coach;
     const client = appt.Client;
     if (!client) continue;
-
     const { subject, text, html } = generateReminderEmail({
       coach: coach?.name || 'Votre coach',
       client: client.name || client.email,
@@ -39,14 +35,12 @@ export async function sendReminderJob() {
       rebookLink: `${process.env.NEXT_PUBLIC_APP_URL}/book/${coach?.id}`,
       cancelLink: `${process.env.NEXT_PUBLIC_APP_URL}/api/appointments/${appt.id}/cancel`,
     });
-
     await sendEmail({
       to: client.email,
       subject,
       text,
       html,
     });
-
     await db.notification.create({
       data: {
         userId: appt.coachId,
