@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   
   // Optimize images for Netlify
   images: {
@@ -34,5 +33,3 @@ const nextConfig = {
     esmExternals: true,
   },
 };
-
-export default nextConfig;
