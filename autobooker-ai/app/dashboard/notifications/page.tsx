@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth/next';
 import { redirect } from "next/navigation";
-import { db } from "@/prisma/client";
+import { db } from "@prisma/client";
 import { authOptions } from "../../api/auth/[...nextauth]/route";
 
 export default async function NotificationsPage() {
@@ -8,12 +8,10 @@ export default async function NotificationsPage() {
   if (!session || !session.user) {
     redirect("/login");
   }
-
   const notifications = await db.notification.findMany({
     where: { userId: session.user.id },
     orderBy: { createdAt: "desc" }
   });
-
   return (
     <div className="p-4 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Notifications</h1>
