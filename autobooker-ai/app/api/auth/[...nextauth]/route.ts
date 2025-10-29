@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import EmailProvider from "@auth/core/providers/email";
-import { db } from "@/prisma/client";
+import { db } from "@/lib/db";
 
 export const authOptions = {
   adapter: PrismaAdapter(db),
