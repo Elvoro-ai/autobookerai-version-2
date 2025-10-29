@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { db } from "@/prisma/client";
+import { db } from "@prisma/client";
 
 const AppointmentSchema = z.object({
   coachId: z.string().uuid(),
