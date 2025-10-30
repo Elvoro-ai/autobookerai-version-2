@@ -11,6 +11,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "export": "next build && next export",
     "lint": "next lint --fix",
     "lint:check": "next lint",
     "test": "vitest",
@@ -21,9 +22,9 @@
     "migrate:deploy": "prisma migrate deploy",
     "seed": "ts-node prisma/seed.ts",
     "postinstall": "prisma generate || echo 'skip prisma generate'",
-    "clean": "rm -rf .next",
+    "clean": "rm -rf .next out",
     "build:analyze": "ANALYZE=true npm run build",
-    "netlify:build": "npm ci && npm run build"
+    "netlify:build": "npm ci --legacy-peer-deps && npm run build"
   },
   "dependencies": {
     "@auth/core": "0.34.2",
