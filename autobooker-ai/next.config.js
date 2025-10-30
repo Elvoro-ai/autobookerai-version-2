@@ -2,15 +2,18 @@
 const nextConfig = {
   reactStrictMode: true,
   
-  // Optimize images for Netlify
+  // Static export for Netlify deployment
+  output: 'export',
+  
+  // Disable image optimization for static export
   images: {
     unoptimized: true
   },
   
-  // Ensure static export compatibility
-  trailingSlash: true,
+  // Remove trailing slash to avoid redirect issues
+  trailingSlash: false,
   
-  // Webpack configuration
+  // Webpack configuration for better compatibility
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
@@ -23,7 +26,7 @@ const nextConfig = {
     return config;
   },
   
-  // Environment variable configuration
+  // Environment variables
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
@@ -33,3 +36,5 @@ const nextConfig = {
     esmExternals: true,
   },
 };
+
+module.exports = nextConfig;
