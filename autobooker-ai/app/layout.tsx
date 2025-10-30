@@ -1,21 +1,21 @@
-import './globals.css';
-import type { ReactNode } from 'react';
+import './globals.css'
+import type { Metadata } from 'next'
 
-export const metadata = {
-  title: 'AutoBooker AI',
-  description: 'Gagnez 10 heures/semaine gr\u00e2ce \u00e0 l\u2019IA',
-};
+export const metadata: Metadata = {
+  title: 'AutoBooker AI - Réservation Intelligente',
+  description: 'Système de réservation automatisé avec intelligence artificielle',
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="fr" className="h-full">
-      <body className="min-h-full bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-        {children}
+    <html lang="fr">
+      <body className="antialiased">
+        <main>{children}</main>
       </body>
     </html>
-  );
+  )
 }
