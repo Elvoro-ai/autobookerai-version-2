@@ -1,64 +1,23 @@
-# Netlify configuration for AutoBooker AI - Optimized for Next.js static export
-# This configuration ensures 100% successful deployment on Netlify
-
+# Netlify configuration for Next.js static export
 [build]
-  base = "autobooker-ai"          # Subdirectory containing the Next.js app
-  publish = "out"                 # Static export output directory (Next.js with output: 'export')
-  command = "npm ci --legacy-peer-deps && npm run build"
+  base = "autobooker-ai"
+  publish = "out"
+  command = "npm install --legacy-peer-deps && npm run build"
 
 [build.environment]
-  NODE_VERSION = "20"             # Use Node.js 20 for compatibility
-  NPM_FLAGS = "--legacy-peer-deps" # Handle peer dependency conflicts
-  CI = "false"                   # Prevent treating warnings as errors
-  NETLIFY = "true"               # Netlify environment flag
-  NODE_ENV = "production"        # Production environment
-  NEXT_TELEMETRY_DISABLED = "1"  # Disable Next.js telemetry
+  NODE_VERSION = "20"
+  CI = "false"
+  NODE_ENV = "production"
+  NEXT_TELEMETRY_DISABLED = "1"
 
-# Security headers for production
 [[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
 
-# Cache static assets for better performance
-[[headers]]
-  for = "/_next/static/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-# Cache images and other assets
-[[headers]]
-  for = "/images/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-# Don't cache HTML files
-[[headers]]
-  for = "/*.html"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-
-# Handle client-side routing for SPA
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = false
-
-# Build processing optimizations
-[build.processing]
-  skip_processing = false
-
-[build.processing.css]
-  bundle = true
-  minify = true
-
-[build.processing.js]
-  bundle = true
-  minify = true
-
-[build.processing.html]
-  pretty_urls = true
