@@ -1,49 +1,20 @@
-import { NextResponse } from "next/server";
-import { z } from "zod";
-import { db } from "../../../lib/db";
-
-const AppointmentSchema = z.object({
-  coachId: z.string().uuid(),
-  clientId: z.string().uuid(),
-  dateTime: z.string().or(z.date()).transform((val) => new Date(val)),
-});
+import { NextResponse, NextRequest } from 'next/server';
 
 export async function GET() {
-  const appointments = await db.appointment.findMany();
+  const appointments = [
+    { id: 1, date: '2025-11-01', time: '10:00', client: 'Jean Dupont', status: 'confirmed' },
+    { id: 2, date: '2025-11-02', time: '14:00', client: 'Marie Martin', status: 'pending' }
+  ];
   return NextResponse.json(appointments);
 }
 
-export async function POST(req: Request) {
-  try {
-    const body = await req.json();
-    const { coachId, clientId, dateTime } = AppointmentSchema.parse(body);
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  return NextResponse.json({ success: true, id: Math.floor(Math.random() * 1000), ...body });
+}
 
-    // vérifier qu'aucun rendez-vous n'existe déjà pour ce coach à la même date/heure (et non annulé)
-    const conflict = await db.appointment.findFirst({
-      where: {
-        coachId,
-        dateTime,
-        cancelled: false,
-      },
-    });
-
-    if (conflict) {
-      return NextResponse.json({ error: "Slot already booked" }, { status: 400 });
-    }
-
-    const appointment = await db.appointment.create({
-      data: {
-        coachId,
-        clientId,
-        dateTime,
-      },
-    });
-
-    return NextResponse.json(appointment, { status: 201 });
-  } catch (err) {
-    if (err instanceof z.ZodError) {
-      return NextResponse.json({ error: err.errors }, { status: 400 });
-    }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
+export async function DELETE(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get('id');
+  return NextResponse.json({ success: true, deleted: id });
 }

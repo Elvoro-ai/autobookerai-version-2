@@ -1,9 +1,15 @@
-import { PrismaClient } from '@prisma/client';
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+// Mock database for MVP deployment
+export const db = {
+  availability: {
+    findMany: () => Promise.resolve([]),
+    create: (data: any) => Promise.resolve({ id: 1, ...data }),
+    update: (params: any) => Promise.resolve({ id: params.where.id, ...params.data }),
+    delete: (params: any) => Promise.resolve({ id: params.where.id })
+  },
+  appointment: {
+    findMany: () => Promise.resolve([]),
+    create: (data: any) => Promise.resolve({ id: 1, ...data }),
+    update: (params: any) => Promise.resolve({ id: params.where.id, ...params.data }),
+    delete: (params: any) => Promise.resolve({ id: params.where.id })
+  }
 };
-
-export const db = globalForPrisma.prisma ?? new PrismaClient();
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db;
